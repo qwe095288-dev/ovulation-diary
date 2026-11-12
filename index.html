@@ -1,0 +1,520 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="robots" content="noindex,nofollow"><style>:root{color-scheme:light;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>排卵試紙日記</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* 版面：一個畫面只做一件事。頂端品牌列，中間一張主卡（圖示＋一句大字＋一顆主按鈕），週期進度條在卡片下方，其餘收進底部。 */
+:root{
+  --bg:#F3F4FA; --surface:#FFFFFF; --ink:#1A1F3D; --muted:#5C6386; --rule:#E1E4F0; --track:#E6E9F4;
+  --line:#B8246A; --line-soft:#FBE8F0; --blue:#2D57CF; --blue-deep:#2247B3; --blue-soft:#E7EDFC; --on-blue:#FFFFFF;
+  --membrane:#FFFFFF; --handle:#2D57CF; --warn:#8F5400; --warn-soft:#FCF1DC;
+  --shadow:0 1px 2px rgba(26,31,61,.06),0 14px 32px -18px rgba(26,31,61,.28);
+  --f-text:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-num:"Space Grotesk","Noto Sans TC",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F111C; --surface:#191C2D; --ink:#EDEFF8; --muted:#A3A9C6; --rule:#2B2F4A; --track:#2B2F4A;
+  --line:#F2669F; --line-soft:#33192A; --blue:#86A2FF; --blue-deep:#A3B8FF; --blue-soft:#1E2748; --on-blue:#0E1330;
+  --membrane:#EDEFF8; --handle:#5C7BE6; --warn:#F1B95B; --warn-soft:#332814;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 14px 32px -18px rgba(0,0,0,.7); color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0F111C; --surface:#191C2D; --ink:#EDEFF8; --muted:#A3A9C6; --rule:#2B2F4A; --track:#2B2F4A;
+  --line:#F2669F; --line-soft:#33192A; --blue:#86A2FF; --blue-deep:#A3B8FF; --blue-soft:#1E2748; --on-blue:#0E1330;
+  --membrane:#EDEFF8; --handle:#5C7BE6; --warn:#F1B95B; --warn-soft:#332814;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 14px 32px -18px rgba(0,0,0,.7); color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:18px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:460px;margin:0 auto;padding-block:16px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:18px}
+
+/* 品牌列 */
+.hdr{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 2px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:.04em}
+.logo{width:34px;height:34px;border-radius:10px;background:var(--blue);display:flex;align-items:center;justify-content:center;gap:4px;flex:none}
+.logo i{display:block;width:4px;height:16px;border-radius:2px;background:var(--on-blue)}
+.logo i+i{opacity:.55}
+.hdr .date{font-size:14px;color:var(--muted);font-weight:500;white-space:nowrap}
+
+/* 存檔狀態 */
+.sync{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700;color:var(--muted);padding:0 2px;margin-top:-8px}
+.sync i{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none}
+.sync.ok{color:var(--blue)}.sync.ok i{background:var(--blue)}
+.sync.off,.sync.fail{color:var(--line)}.sync.off i,.sync.fail i{background:var(--line)}
+.banner{background:var(--line-soft);border:1.5px solid var(--line);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.banner b{font-size:19px;color:var(--line)}
+.banner span{font-size:15.5px}
+
+/* 主卡 */
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:24px;padding:32px 22px 24px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.card.go{background:linear-gradient(180deg,var(--blue-soft),var(--surface) 62%)}
+.card.surge{background:linear-gradient(180deg,var(--line-soft),var(--surface) 62%)}
+.card.warn{background:linear-gradient(180deg,var(--warn-soft),var(--surface) 62%)}
+.ico{width:72px;height:72px;border-radius:50%;background:var(--track);color:var(--muted);display:flex;align-items:center;justify-content:center;flex:none}
+.ico svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.go .ico{background:var(--blue);color:var(--on-blue)}
+.surge .ico{background:var(--line);color:var(--surface)}
+.warn .ico{background:var(--warn);color:var(--surface)}
+.ok .ico{background:var(--blue-soft);color:var(--blue)}
+.chip{font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--muted);background:var(--bg);border:1px solid var(--rule);border-radius:99px;padding:3px 12px}
+.big{font-size:32px;font-weight:900;line-height:1.25;margin:0;text-wrap:balance;letter-spacing:.01em}
+.surge .big{color:var(--line)}
+.mid{font-size:19px;font-weight:500;margin:0;text-wrap:balance}
+.small{font-size:15px;color:var(--muted);margin:0}
+.steps{display:flex;gap:6px;align-items:center;font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.08em}
+.steps i{display:block;width:22px;height:5px;border-radius:99px;background:var(--track)}
+.steps i.on{background:var(--blue)}
+
+/* 計時環 */
+.ring{position:relative;width:200px;max-width:100%;aspect-ratio:1}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:10}
+.ring .trk{stroke:var(--track)}
+.ring .prg{stroke:var(--blue);stroke-linecap:round;stroke-dasharray:552.9;stroke-dashoffset:552.9}
+.count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--f-num);font-weight:700;font-size:54px;line-height:1;font-variant-numeric:tabular-nums}
+.count.one{font-size:88px}
+
+/* 按鈕 */
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn{width:100%;min-height:64px;border-radius:18px;border:0;background:var(--blue);color:var(--on-blue);
+  font-size:22px;font-weight:700;padding:12px 16px;box-shadow:0 10px 20px -12px var(--blue)}
+.btn:hover{background:var(--blue-deep)}
+.btn:active{transform:scale(.98)}
+.btn.plain{background:var(--surface);color:var(--ink);border:1.5px solid var(--rule);font-size:18px;min-height:54px;font-weight:500;box-shadow:none}
+.btn.plain:hover{border-color:var(--muted)}
+.btn.period{background:var(--surface);color:var(--line);border:1.5px solid var(--line);box-shadow:none;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn.period svg{width:24px;height:24px;fill:currentColor}
+.btn.tiny{width:auto;min-height:38px;font-size:14px;padding:5px 12px;border-radius:10px}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.btns{display:flex;flex-direction:column;gap:10px;width:100%}
+.stack{display:flex;flex-direction:column;gap:14px}
+
+input[type=date],textarea{font:inherit;font-size:22px;color:var(--ink);background:var(--bg);border:1.5px solid var(--rule);
+  border-radius:16px;padding:12px;min-height:62px;width:100%;min-width:0;text-align:center}
+textarea{font-size:13px;text-align:left;min-height:70px;font-family:ui-monospace,monospace}
+.stepper{display:flex;align-items:center;justify-content:center;gap:16px;width:100%}
+.stepper button{width:64px;height:64px;border-radius:50%;border:1.5px solid var(--rule);background:var(--bg);font-size:32px;font-weight:700;line-height:1;flex:none}
+.stepper button:active{transform:scale(.94)}
+.stepper .v{font-family:var(--f-num);font-size:64px;font-weight:700;min-width:2.3ch;font-variant-numeric:tabular-nums;line-height:1}
+.stepper .u{font-size:18px;color:var(--muted);font-weight:500;margin-left:-8px}
+.err{color:var(--line);font-weight:700;font-size:16px;margin:0;min-height:1.5em}
+
+/* 週期進度條 */
+.prog{background:var(--surface);border:1px solid var(--rule);border-radius:20px;padding:16px 18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px}
+.track{position:relative;height:12px;border-radius:99px;background:var(--track)}
+.track .win{position:absolute;top:0;bottom:0;border-radius:99px;background:var(--blue);opacity:.35}
+.track .dot{position:absolute;top:50%;width:22px;height:22px;border-radius:50%;background:var(--ink);border:4px solid var(--surface);transform:translate(-50%,-50%);box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.keys{display:flex;justify-content:space-between;gap:12px;font-size:13.5px;color:var(--muted);flex-wrap:wrap}
+.keys span{display:inline-flex;align-items:center;gap:6px}
+.keys b{color:var(--ink);font-weight:700}
+.k-dot{width:10px;height:10px;border-radius:50%;background:var(--ink)}
+.k-win{width:16px;height:8px;border-radius:99px;background:var(--blue);opacity:.45}
+
+/* 試紙圖：藍色握把在上，C 線靠握把，T 線在下 */
+.ts{width:40px;height:108px;background:var(--membrane);border:1.5px solid var(--rule);border-radius:7px;position:relative;flex:none;overflow:hidden;box-shadow:0 4px 10px -6px rgba(0,0,0,.35)}
+.ts::before{content:"";position:absolute;inset:0 0 auto 0;height:32px;background:var(--handle)}
+.ts i{position:absolute;left:0;right:0;height:7px;background:#B8246A}
+.ts i.c{top:48px}.ts i.t{top:70px}
+.ts i.faint{opacity:.22}
+.pick{display:flex;align-items:center;gap:18px;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--rule);
+  border-radius:20px;padding:14px 16px 14px 20px;min-height:136px;box-shadow:var(--shadow)}
+.pick:hover{border-color:var(--blue)}
+.pick:active{transform:scale(.985);border-color:var(--blue)}
+.pick .tx{flex:1;min-width:0}
+.pick b{font-size:22px;line-height:1.3;display:block}
+.pick .tx span{font-size:15px;color:var(--muted)}
+.pick .go-arrow{font-size:28px;color:var(--muted);line-height:1}
+
+/* 底部 */
+details{background:var(--surface);border:1px solid var(--rule);border-radius:20px;font-size:16px}
+summary{padding:16px 18px;font-weight:700;cursor:pointer;color:var(--muted);font-size:15px;letter-spacing:.06em}
+details .in{padding:0 18px 18px;display:flex;flex-direction:column;gap:12px}
+h3{font-size:12.5px;font-weight:700;letter-spacing:.14em;color:var(--muted);margin:6px 0 0}
+.log{list-style:none;margin:0;padding:0}
+.log li{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--rule)}
+.log li:first-child{border-top:0;padding-top:0}
+.log .w{flex:1;min-width:0;font-family:var(--f-num);font-variant-numeric:tabular-nums;font-size:15px}
+.pill{font-size:13px;font-weight:700;padding:2px 10px;border-radius:99px;border:1.5px solid var(--rule);white-space:nowrap}
+.pill.pos{background:var(--line);border-color:var(--line);color:var(--surface)}
+.kv{display:flex;justify-content:space-between;gap:12px;font-size:15px}
+.kv span:first-child{color:var(--muted)}
+.tips{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:15px}
+.msg{font-size:15px;color:var(--blue);margin:0;min-height:1.5em}
+hr{border:0;border-top:1px solid var(--rule);width:100%;margin:4px 0}
+.foot{text-align:center;font-size:12.5px;color:var(--muted);margin:0}
+@media (prefers-reduced-motion:no-preference){
+  .btn,.pick,.stepper button{transition:transform .12s ease,background-color .15s ease,border-color .15s ease}
+  .ring .prg{transition:stroke-dashoffset .3s linear}
+  .card{animation:rise .28s ease both}
+  @keyframes rise{from{transform:translateY(6px)}to{transform:none}}
+}
+</style>
+
+<div class="wrap">
+  <header class="hdr">
+    <div class="brand"><span class="logo" aria-hidden="true"><i></i><i></i></span>排卵試紙日記</div>
+    <span class="date" id="hdrDate"></span>
+  </header>
+  <div class="sync" id="sync" role="status"><i></i><span id="syncText">讀取紀錄中…</span></div>
+  <main id="app" class="stack" aria-live="polite"></main>
+  <div id="extra" class="stack"></div>
+  <p class="foot">依 Wondfo 排卵試紙（W2-S）說明書的規則計算，不能取代醫師建議。</p>
+</div>
+
+<script>
+(function(){
+const KEY='lh-diary-v1', DAY=86400000, WK='日一二三四五六';
+const DIP=3000, WAIT=300000, LATE=120000, RING=552.9;
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const fromIso=s=>{const p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2])};
+const midnight=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
+const addDays=(d,n)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);
+const dayDiff=(a,b)=>Math.round((midnight(a)-midnight(b))/DAY);
+const fDate=d=>(d.getMonth()+1)+' 月 '+d.getDate()+' 日 星期'+WK[d.getDay()];
+const fShort=d=>(d.getMonth()+1)+'/'+d.getDate()+'（'+WK[d.getDay()]+'）';
+const fMD=d=>(d.getMonth()+1)+'/'+d.getDate();
+const fTime=d=>pad(d.getHours())+':'+pad(d.getMinutes());
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const startDayFor=len=>len?len-16:11;   // 說明書對照表：21 天→第 5 天 … 40 天→第 24 天；不知道→第 11 天
+const RN={pos:'快排卵了',neg:'還沒到',inv:'無效'};
+const lenHint=n=>n<=21?'試紙說明書最短只到 21 天。比 21 天還短，請先問醫師。'
+  :n>=40?'試紙說明書最長只到 40 天。超過 40 天，請先問醫師。'
+  :'從月經第一天，算到下次月經第一天。';
+const P={
+  cal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  alert:'<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.4v.2"/>',
+  drop:'<path d="M12 3.5s6 6.2 6 10.5a6 6 0 0 1-12 0c0-4.3 6-10.5 6-10.5z"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'
+};
+const ico=n=>'<div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24">'+P[n]+'</svg></div>';
+
+function clean(o){
+  o=o&&typeof o==='object'?o:{};
+  const len=Number(o.cycleLen);
+  return {
+    cycleLen:(len>=21&&len<=40)?len:null,
+    starts:(Array.isArray(o.starts)?o.starts:[]).filter(s=>/^\d{4}-\d{2}-\d{2}$/.test(s)).sort(),
+    logs:(Array.isArray(o.logs)?o.logs:[]).filter(l=>l&&RN[l.r]&&Number.isFinite(l.ts)).map(l=>({id:String(l.id||l.ts),ts:l.ts,r:l.r})),
+    timer:Number.isFinite(o.timer)?o.timer:null
+  };
+}
+function load(){try{return clean(JSON.parse(localStorage.getItem(KEY)))}catch(e){return clean(null)}}
+/* 存檔：主要存在雲端（這個頁面的私人資料區），瀏覽器儲存只當備用，因為 Safari 關掉後會清掉它 */
+const cloud={state:'loading',ref:null,busy:false,dirty:false,last:'',tries:0};
+const SYNC={loading:'讀取紀錄中…',ok:'已自動存檔',saving:'存檔中…',off:'這支手機不會存檔',local:'已自動存在這支手機',fail:'沒存成功，請檢查網路',slow:'連不上存檔，請檢查網路'};
+function setSync(s){cloud.state=s;const el=$('sync');el.className='sync '+(s==='slow'?'fail':s==='local'?'ok':s);$('syncText').textContent=SYNC[s]}
+const bodyOf=s=>({cycleLen:s.cycleLen||0,starts:s.starts,logs:s.logs,timer:s.timer||0});
+function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function save(){saveLocal();push()}
+async function push(){
+  if(!cloud.ref)return;
+  if(cloud.busy){cloud.dirty=true;return}
+  const b=bodyOf(S), j=JSON.stringify(b);
+  if(j===cloud.last){if(cloud.state==='saving')setSync('ok');return}
+  cloud.busy=true;setSync('saving');
+  try{await cloud.ref.set(b);cloud.last=j;cloud.tries=0;setSync('ok')}
+  catch(e){
+    if(e&&e.code==='invalid_argument'){cloud.ref=null;setSync('off');render()}
+    else{setSync('fail');if(cloud.tries++<3)setTimeout(push,3000)}
+  }
+  cloud.busy=false;
+  if(cloud.dirty){cloud.dirty=false;push()}
+}
+async function initCloud(){
+  if(!(window.claude&&window.claude.use)){
+    // 獨立部署版：資料存在這個網址自己的瀏覽器儲存空間
+    cloud.standalone=true;let ok=false;
+    try{localStorage.setItem(KEY+'-t','1');ok=localStorage.getItem(KEY+'-t')==='1';localStorage.removeItem(KEY+'-t')}catch(e){}
+    try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().catch(()=>{})}catch(e){}
+    setSync(ok?'local':'off');render();return;
+  }
+  let db=null,uid=null,canWrite=false;
+  try{
+    if(window.claude&&window.claude.use){
+      const r=await Promise.all([window.claude.use('db'),window.claude.use('user')]);
+      db=r[0];const user=r[1];
+      if(user){uid=await user.id();canWrite=(await user.isOwner())||(await user.can('data.write'))===true}
+    }
+  }catch(e){}
+  if(!db||!uid||!canWrite){setSync('off');render();return}
+  const ref=db.doc('data/users/'+uid+'/diary');
+  let first=true;
+  const to=setTimeout(()=>{if(first){setSync('slow');render()}},10000);
+  ref.onSnapshot(snap=>{
+    if(snap.metadata.hasPendingWrites)return;
+    if(first&&snap.metadata.fromCache&&!snap.exists)return;
+    const wasFirst=first;first=false;clearTimeout(to);cloud.ref=ref;
+    if(snap.exists){
+      const c=clean(snap.data()), j=JSON.stringify(bodyOf(c));
+      cloud.last=j;
+      if(!cloud.busy&&!cloud.dirty&&j!==JSON.stringify(bodyOf(S))){
+        S=c;saveLocal();
+        if(S.timer&&!iv){lastPhase=phase();iv=setInterval(tick,250)}
+        setSync('ok');render();return;
+      }
+      setSync('ok');
+    }else if(wasFirst){if(S.starts.length)push();else setSync('ok')}
+    if(wasFirst)render();
+  },()=>{clearTimeout(to);first=false;cloud.ref=null;setSync('off');render()});
+}
+let S=load();
+let ui={screen:null,tmp:null,result:null,err:'',edit:false,msg:''};
+
+function cycle(){
+  const today=new Date();
+  const past=S.starts.filter(s=>fromIso(s)<=today);
+  const cur=past.length?past[past.length-1]:S.starts[0];
+  const next=S.starts[S.starts.indexOf(cur)+1];
+  const start=fromIso(cur), nx=next?fromIso(next):null;
+  return {start,logs:S.logs.filter(l=>l.ts>=start.getTime()&&(!nx||l.ts<nx.getTime()))};
+}
+function phase(){
+  if(!S.timer)return null;
+  const el=Date.now()-S.timer;
+  return el<DIP?'dip':el<DIP+WAIT?'wait':el<DIP+WAIT+LATE?'read':'late';
+}
+function current(){
+  if(ui.screen==='setup1'||ui.screen==='setup2'||ui.screen==='period')return ui.screen;
+  if(!S.starts.length)return 'setup1';
+  if(S.timer)return ui.screen==='read'?'read':phase();
+  if(ui.screen==='prep'||ui.screen==='result'||ui.screen==='read')return ui.screen;
+  return 'home';
+}
+const strip=(c,t)=>'<div class="ts" aria-hidden="true">'+(c?'<i class="c"></i>':'')+(t?'<i class="t'+(t==='faint'?' faint':'')+'"></i>':'')+'</div>';
+const pick=(r,c,t,a,b)=>'<button class="pick" data-act="res" data-r="'+r+'">'+strip(c,t)+'<div class="tx"><b>'+a+'</b><span>'+b+'</span></div><span class="go-arrow" aria-hidden="true">›</span></button>';
+const ring=cls=>'<div class="ring"><svg viewBox="0 0 200 200" aria-hidden="true"><circle class="trk" cx="100" cy="100" r="88"/><circle class="prg" id="ringp" cx="100" cy="100" r="88"/></svg><div class="count'+(cls?' '+cls:'')+'" id="clock"></div></div>';
+const stepDots=n=>'<div class="steps"><i class="on"></i><i'+(n>1?' class="on"':'')+'></i><span>步驟 '+n+' / 2</span></div>';
+
+function progress(c,day,sd){
+  const total=Math.max(S.cycleLen||28,sd+4,day);
+  const pct=x=>Math.min(100,Math.max(0,x/total*100));
+  const a=addDays(c.start,sd-1), b=addDays(c.start,sd+3);
+  return '<div class="prog"><div class="track"><div class="win" style="left:'+pct(sd-1).toFixed(1)+'%;width:'+(5/total*100).toFixed(1)+'%"></div>'+
+    '<div class="dot" style="left:'+pct(day-.5).toFixed(1)+'%"></div></div>'+
+    '<div class="keys"><span><i class="k-dot"></i>今天 <b>第 '+day+' 天</b></span><span><i class="k-win"></i>測試日 <b>'+fMD(a)+' – '+fMD(b)+'</b></span></div></div>';
+}
+
+function render(){
+  const sc=current(), today=new Date();
+  $('hdrDate').textContent=fDate(today);
+  let h='';
+  if(cloud.state==='loading'&&!S.starts.length){
+    $('app').innerHTML='<div class="card">'+ico('clock')+'<p class="big">讀取紀錄中…</p><p class="small">請等一下</p></div>';
+    $('extra').hidden=true;return;
+  }
+  const warn=(cloud.state==='off'&&(sc==='home'||sc==='setup1'))?
+    '<div class="banner"><b>這支手機現在不會存檔</b><span>'+(cloud.standalone?'這個瀏覽器不讓網頁存資料。請不要用無痕模式，改用 Safari 直接打開這個網址。':'關掉網頁後紀錄會消失。請先在這支手機的瀏覽器登入 Claude（用建立這個頁面的帳號），再重新打開這一頁。')+'</span></div>':'';
+  if(sc==='setup1'){
+    const v=(ui.tmp&&ui.tmp.date)||'';
+    h='<div class="card">'+(ui.edit?'':stepDots(1))+ico('cal')+'<p class="big">這次月經<br>第一天是哪一天？</p>'+
+      '<input type="date" id="inDate" aria-label="月經第一天" max="'+iso(today)+'" value="'+v+'">'+
+      '<p class="err">'+ui.err+'</p>'+
+      '<div class="btns"><button class="btn" data-act="s1next">下一步</button>'+
+      (ui.edit?'<button class="btn plain" data-act="home">取消</button>':'')+'</div></div>';
+  }else if(sc==='setup2'){
+    const edge=ui.tmp.len===21||ui.tmp.len===40;
+    h='<div class="card">'+(ui.edit?'':stepDots(2))+'<p class="big">月經大概<br>幾天來一次？</p>'+
+      '<div class="stepper"><button data-act="minus" aria-label="減少一天">−</button><span class="v" id="lenV">'+ui.tmp.len+'</span><span class="u">天</span><button data-act="plus" aria-label="增加一天">＋</button></div>'+
+      '<p class="small" id="lenHint"'+(edge?' style="color:var(--line);font-weight:700"':'')+'>'+lenHint(ui.tmp.len)+'</p>'+
+      '<div class="btns"><button class="btn" data-act="s2ok">就是 <span id="lenB">'+ui.tmp.len+'</span> 天</button>'+
+      '<button class="btn plain" data-act="s2unk">我不知道</button></div></div>';
+  }else if(sc==='period'){
+    h='<div class="card">'+ico('cal')+'<p class="big">月經第一天<br>是哪一天？</p>'+
+      '<input type="date" id="inDate" aria-label="月經第一天" max="'+iso(today)+'" value="'+iso(today)+'">'+
+      '<p class="err">'+ui.err+'</p>'+
+      '<div class="btns"><button class="btn" data-act="periodOk">確定</button><button class="btn plain" data-act="home">取消</button></div></div>';
+  }else if(sc==='prep'){
+    h='<div class="card go">'+strip(0,0)+'<p class="big">準備好尿液<br>和一支新試紙</p>'+
+      '<p class="mid">箭頭朝下泡進去，<br>水不要超過黑線。</p>'+
+      '<div class="btns"><button class="btn" data-act="dip">泡進去了</button><button class="btn plain" data-act="home">取消</button></div></div>';
+  }else if(sc==='dip'){
+    h='<div class="card go"><p class="big">泡著不要動</p>'+ring('one')+'<p class="mid">數到 0 就拿出來</p></div>';
+  }else if(sc==='wait'){
+    h='<div class="card"><p class="big">拿出來，放平</p><p class="mid">等 5 分鐘，時間到會有嗶聲</p>'+ring('')+
+      '<div class="btns"><button class="btn plain" data-act="skip">已經等 5 分鐘了</button><button class="btn plain" data-act="cancel">取消</button></div></div>';
+  }else if(sc==='late'){
+    h='<div class="card warn">'+ico('alert')+'<p class="big">放太久了<br>這支不準</p><p class="mid">請換一支新的重測。</p>'+
+      '<div class="btns"><button class="btn" data-act="retest">換一支重測</button>'+
+      '<button class="btn plain" data-act="toRead">我有準時看結果</button><button class="btn plain" data-act="cancel">今天不測了</button></div></div>';
+  }else if(sc==='read'){
+    h='<div class="card go" style="padding-block:22px 20px">'+ico('clock')+'<p class="big">時間到！</p><p class="mid">藍色握把朝上。<br>你的試紙像哪一個？</p></div>'+
+      '<div class="btns">'+pick('pos',1,1,'兩條線一樣深','或是下面那條更深')+pick('neg',1,'faint','下面那條比較淡','或是下面沒有線')+pick('inv',0,1,'上面那條沒出現','不管下面有沒有線')+
+      '<button class="btn plain" data-act="cancel">取消</button></div>';
+  }else if(sc==='result'){
+    const r=ui.result;
+    if(r==='pos'){
+      const c=cycle(), fp=c.logs.filter(l=>l.r==='pos').sort((a,b)=>a.ts-b.ts)[0], d0=new Date(fp?fp.ts:Date.now());
+      h='<div class="card surge">'+ico('heart')+'<p class="big">快排卵了！</p><p class="mid">今天到 '+fShort(addDays(d0,2))+'<br>都適合同房。</p>'+
+        '<p class="small">這個月不用再測了。</p><button class="btn" data-act="home">好</button></div>';
+    }else if(r==='neg'){
+      h='<div class="card ok">'+ico('check')+'<p class="big">還沒到</p><p class="mid">明天再測一次。</p><button class="btn" data-act="home">好</button></div>';
+    }else{
+      h='<div class="card warn">'+ico('alert')+'<p class="big">這支沒有成功</p><p class="mid">請換一支新的再測。</p>'+
+        '<div class="btns"><button class="btn" data-act="retest">換一支重測</button><button class="btn plain" data-act="home">等一下再測</button></div></div>';
+    }
+  }else{
+    const c=cycle(), day=dayDiff(today,c.start)+1, sd=startDayFor(S.cycleLen);
+    const fp=c.logs.filter(l=>l.r==='pos').sort((a,b)=>a.ts-b.ts)[0];
+    const tested=c.logs.some(l=>l.r==='neg'&&dayDiff(new Date(l.ts),today)===0);
+    const chip='<span class="chip">月經第 '+day+' 天</span>';
+    if(fp){
+      const end=addDays(new Date(fp.ts),2);
+      if(dayDiff(today,end)<=0)
+        h='<div class="card surge">'+chip+ico('heart')+'<p class="big">快排卵了！</p><p class="mid">今天到 '+fShort(end)+'<br>都適合同房。</p><p class="small">這個月不用再測了。</p></div>';
+      else
+        h='<div class="card ok">'+chip+ico('check')+'<p class="big">這個月測完了</p><p class="mid">月經來的時候，<br>按下面的按鈕。</p></div>';
+    }else if(day<sd){
+      const n=sd-day;
+      h='<div class="card">'+chip+ico('cal')+'<p class="big">今天不用測</p><p class="mid">'+(n===1?'明天':n+' 天後')+'開始測</p><p class="small">'+fDate(addDays(c.start,sd-1))+'</p></div>';
+    }else if(tested){
+      h='<div class="card ok">'+chip+ico('check')+'<p class="big">今天測好了</p><p class="mid">明天再測一次。</p></div>';
+    }else{
+      h='<div class="card go">'+chip+ico('drop')+'<p class="big">今天要測</p><p class="small">測之前 2 小時少喝水，比較準。</p><button class="btn" data-act="prep">開始測試</button></div>';
+    }
+    h+=progress(c,day,sd);
+    h+='<button class="btn period" data-act="period"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5s6 6.2 6 10.5a6 6 0 0 1-12 0c0-4.3 6-10.5 6-10.5z"/></svg>月經來了</button>';
+  }
+  $('app').innerHTML=warn+h;
+  $('extra').hidden=sc!=='home';
+  if(sc==='home')renderExtra();
+  tickClock();
+}
+
+function renderExtra(){
+  const logs=S.logs.slice().sort((a,b)=>b.ts-a.ts);
+  const list=logs.length?'<ul class="log">'+logs.map(l=>{const d=new Date(l.ts);
+    return '<li><span class="w">'+fShort(d)+' '+fTime(d)+'</span><span class="pill '+l.r+'">'+RN[l.r]+'</span>'+
+      '<button class="btn plain tiny" data-act="del" data-id="'+esc(l.id)+'">刪除</button></li>'}).join('')+'</ul>'
+    :'<p class="small">還沒有紀錄。測完之後會出現在這裡。</p>';
+  const open=$('more')&&$('more').open;
+  $('extra').innerHTML='<details id="more"'+(open?' open':'')+'><summary>紀錄與設定</summary><div class="in">'+
+    '<h3>測試紀錄</h3>'+list+'<hr>'+
+    '<h3>週期設定</h3>'+
+    '<div class="kv"><span>月經第一天</span><b>'+fShort(cycle().start)+'</b></div>'+
+    '<div class="kv"><span>多久來一次</span><b>'+(S.cycleLen?S.cycleLen+' 天':'不知道')+'</b></div>'+
+    '<button class="btn plain" data-act="edit">改日期或週期</button><hr>'+
+    '<h3>小提醒</h3>'+
+    '<ul class="tips"><li>每天測 1 次，盡量同一個時間。</li><li>試紙不能用來避孕。</li><li>測了 3 到 4 個月還沒懷孕，兩個人一起去看醫師。</li><li>月經少於 21 天或超過 38 天來一次，先問醫師。</li></ul><hr>'+
+    '<h3>備份</h3>'+
+    '<p class="small">'+(cloud.ref?'紀錄已自動存在雲端，只有登入這個帳號才看得到。想另外留一份可以複製備份。':cloud.state==='local'?'紀錄存在這支手機的瀏覽器裡。換手機或清除瀏覽器資料前，先複製備份貼到備忘錄。':'這支手機現在不會自動存檔，請複製備份貼到備忘錄保存。')+'</p>'+
+    '<button class="btn plain" data-act="copy">複製備份</button>'+
+    '<textarea id="restoreBox" aria-label="貼上備份文字" placeholder="換新手機後，把備份貼在這裡"></textarea>'+
+    '<button class="btn plain" data-act="restore">用備份還原</button>'+
+    '<p class="msg" id="xmsg" role="status">'+ui.msg+'</p></div></details>';
+  ui.msg='';
+}
+
+/* 計時：用時間戳算，手機切到背景再回來也不會跑掉 */
+let lastPhase=null, iv=null, lock=null;
+function beep(){
+  try{const A=window.AudioContext||window.webkitAudioContext,a=new A();
+    [0,.35,.7].forEach(t=>{const o=a.createOscillator(),g=a.createGain();o.frequency.value=880;o.connect(g);g.connect(a.destination);
+      g.gain.setValueAtTime(.25,a.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+t+.25);o.start(a.currentTime+t);o.stop(a.currentTime+t+.26)});
+  }catch(e){}
+  try{navigator.vibrate&&navigator.vibrate([300,150,300])}catch(e){}
+}
+function tickClock(){
+  if(!S.timer)return;
+  const el=Date.now()-S.timer, c=$('clock'), r=$('ringp');
+  if(!c)return;
+  let frac=0;
+  if(el<DIP){c.textContent=Math.ceil((DIP-el)/1000);frac=el/DIP}
+  else if(el<DIP+WAIT){
+    const s=Math.max(0,Math.ceil((DIP+WAIT-el)/1000));
+    c.textContent=Math.floor(s/60)+':'+pad(s%60);
+    frac=(el-DIP)/WAIT;
+  }
+  if(r)r.style.strokeDashoffset=(RING*(1-frac)).toFixed(1);
+}
+function tick(){
+  const p=phase();
+  if(p!==lastPhase){
+    if(lastPhase==='wait'&&p==='read'&&!document.hidden)beep();
+    if(lastPhase==='dip'&&p==='wait'){try{navigator.vibrate&&navigator.vibrate(200)}catch(e){}}
+    lastPhase=p;
+    if(p&&Date.now()-S.timer>3600000){stopTimer();}
+    render();
+  }else tickClock();
+  if(!S.timer&&iv){clearInterval(iv);iv=null}
+}
+function startTimer(at){
+  S.timer=at;save();lastPhase=phase();
+  if(navigator.wakeLock)navigator.wakeLock.request('screen').then(l=>{lock=l}).catch(()=>{});
+  if(!iv)iv=setInterval(tick,250);
+}
+function stopTimer(){S.timer=null;save();lastPhase=null;if(lock){try{lock.release()}catch(e){}lock=null}}
+
+let armed=null, armT=null;
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const a=b.dataset.act, today=new Date();
+  const readDate=()=>{const v=$('inDate').value;
+    if(!v){ui.err='請先選日期';return null}
+    if(fromIso(v)>today){ui.err='不能選未來的日期';return null}
+    ui.err='';return v};
+  if(a==='s1next'){const v=readDate();if(v){ui.tmp={date:v,len:(ui.tmp&&ui.tmp.len)||S.cycleLen||28};ui.screen='setup2'}else ui.tmp={date:$('inDate').value,len:ui.tmp&&ui.tmp.len};}
+  else if(a==='minus'||a==='plus'){
+    ui.tmp.len=Math.min(40,Math.max(21,ui.tmp.len+(a==='plus'?1:-1)));
+    $('lenV').textContent=ui.tmp.len;$('lenB').textContent=ui.tmp.len;
+    const hint=$('lenHint'), edge=ui.tmp.len===21||ui.tmp.len===40;
+    hint.textContent=lenHint(ui.tmp.len);
+    hint.style.color=edge?'var(--line)':'';hint.style.fontWeight=edge?'700':'';return;
+  }
+  else if(a==='s2ok'||a==='s2unk'){
+    S.cycleLen=a==='s2ok'?ui.tmp.len:null;
+    if(ui.edit&&S.starts.length){const cur=iso(cycle().start);S.starts=S.starts.filter(s=>s!==cur)}
+    if(!S.starts.includes(ui.tmp.date))S.starts.push(ui.tmp.date);
+    S.starts.sort();save();ui={screen:null,tmp:null,result:null,err:'',edit:false,msg:''};
+  }
+  else if(a==='edit'){ui.edit=true;ui.err='';ui.tmp={date:iso(cycle().start),len:S.cycleLen||28};ui.screen='setup1'}
+  else if(a==='period'){ui.err='';ui.screen='period'}
+  else if(a==='periodOk'){const v=readDate();if(v){
+      const last=S.starts[S.starts.length-1];
+      if(v<=last){ui.err='這個日期比上次月經還早'}
+      else{S.starts.push(v);save();ui.screen=null}}}
+  else if(a==='home'){ui.screen=null;ui.err='';ui.edit=false}
+  else if(a==='prep'){ui.screen='prep'}
+  else if(a==='dip'){ui.screen=null;startTimer(Date.now())}
+  else if(a==='skip'){startTimer(Date.now()-DIP-WAIT)}
+  else if(a==='toRead'){ui.screen='read'}
+  else if(a==='cancel'){stopTimer();ui.screen=null}
+  else if(a==='retest'){stopTimer();ui.screen='prep'}
+  else if(a==='res'){
+    S.logs.push({id:Date.now().toString(36),ts:Date.now(),r:b.dataset.r});
+    stopTimer();ui.result=b.dataset.r;ui.screen='result';
+  }
+  else if(a==='del'){
+    const id=b.dataset.id;
+    if(armed===id){S.logs=S.logs.filter(l=>l.id!==id);armed=null;clearTimeout(armT);save()}
+    else{armed=id;b.textContent='確定刪除？';clearTimeout(armT);armT=setTimeout(()=>{armed=null;render()},3500);return}
+  }
+  else if(a==='copy'){
+    const text=JSON.stringify({cycleLen:S.cycleLen,starts:S.starts,logs:S.logs});
+    const fb=()=>{$('restoreBox').value=text;$('restoreBox').select();$('xmsg').textContent='請手動複製上面的文字。'};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(()=>{$('xmsg').textContent='已複製，貼到備忘錄保存。'}).catch(fb);else fb();
+    return;
+  }
+  else if(a==='restore'){
+    let c=null;try{c=clean(JSON.parse($('restoreBox').value))}catch(err){}
+    if(!c||!c.starts.length){$('xmsg').textContent='這段文字不是有效的備份。';return}
+    c.timer=null;S=c;save();ui.msg='已還原 '+S.logs.length+' 筆紀錄。';
+  }
+  render();
+  window.scrollTo(0,0);
+});
+
+if(S.timer){lastPhase=phase();iv=setInterval(tick,250)}
+render();
+initCloud();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();render()}});
+})();
+</script>
+
+</body></html>
