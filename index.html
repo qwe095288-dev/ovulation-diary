@@ -167,7 +167,7 @@ hr{border:0;border-top:1px solid var(--rule);width:100%;margin:4px 0}
 <script>
 (function(){
 const KEY='lh-diary-v1', DAY=86400000, WK='日一二三四五六';
-const DIP=3000, WAIT=300000, LATE=120000, RING=552.9;
+const DIP=5000, WAIT=180000, LATE=120000, RING=552.9;   // 說明書：泡 5 秒，拿出平放，3–5 分鐘內判讀，5 分鐘後不看
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,'0');
 const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
@@ -337,8 +337,8 @@ function render(){
   }else if(sc==='dip'){
     h='<div class="card go"><p class="big">泡著不要動</p>'+ring('one')+'<p class="mid">數到 0 就拿出來</p></div>';
   }else if(sc==='wait'){
-    h='<div class="card"><p class="big">拿出來，放平</p><p class="mid">等 5 分鐘，時間到會有嗶聲</p>'+ring('')+
-      '<div class="btns"><button class="btn plain" data-act="skip">已經等 5 分鐘了</button><button class="btn plain" data-act="cancel">取消</button></div></div>';
+    h='<div class="card"><p class="big">拿出來，放平</p><p class="mid">等 3 分鐘，時間到會有嗶聲<br>3 到 5 分鐘內要看結果</p>'+ring('')+
+      '<div class="btns"><button class="btn plain" data-act="skip">已經等 3 分鐘了</button><button class="btn plain" data-act="cancel">取消</button></div></div>';
   }else if(sc==='late'){
     h='<div class="card warn">'+ico('alert')+'<p class="big">放太久了<br>這支不準</p><p class="mid">請換一支新的重測。</p>'+
       '<div class="btns"><button class="btn" data-act="retest">換一支重測</button>'+
